@@ -30,3 +30,20 @@ body {
 .page{
   background: white;
 }
+
+select option {
+  background-color: white;
+  color: black;
+}
+
+/* 移除选择器箭头 */
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* 为 Firefox 特别处理 */
+select::-ms-expand {
+  display: none;
+}

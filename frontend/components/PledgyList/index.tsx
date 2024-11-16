@@ -1,13 +1,19 @@
 'use client';
+import { useRouter } from 'next/navigation';
 
 export const PledgyList = () => {
+  const router = useRouter();
   return (
     <div>
       <div className="h-14 flex justify-between items-center">
         <div className="w-1/2">
           <p className="font-bold text-xl">Pledgy</p>
         </div>
-        <img src="/assets/add.svg" alt="add" />
+        <img
+          src="/assets/add.svg"
+          alt="add"
+          onClick={() => router.push('/create')}
+        />
       </div>
       <div className="w-full p-2.5 pb-0 bg-[#f6f6f6] rounded-lg flex-col justify-start items-end gap-8 inline-flex mt-5">
         <div className="pr-1 pb-3 justify-start items-center inline-flex">
