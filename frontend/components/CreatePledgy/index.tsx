@@ -1,8 +1,10 @@
 'use client';
 import { Header } from '../Header';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Select } from '../Select';
+import { SendTransaction } from '../Transaction';
+import dayjs from 'dayjs';
 
 export const CreatePledgy = () => {
   const router = useRouter();
@@ -10,6 +12,7 @@ export const CreatePledgy = () => {
   const [description, setDescription] = useState('');
   const [type, setType] = useState('onChain');
   const [rule, setRule] = useState('onChain');
+  const [endTimeBuffer, setEndTimeBuffer] = useState('');
   const [endTime, setEndTime] = useState('');
 
   const options = [{ value: 'onChain', label: 'Onchain' }];
@@ -22,6 +25,11 @@ export const CreatePledgy = () => {
     { value: (7 * 24 * 3600).toString(), label: '7 days' },
   ];
 
+  useEffect(() => {
+    // 计算当前时间加上endTimeBuffer秒，返回number
+    const endTime = new Date(new Date().getTime() + parseInt(endTimeBuffer));
+    setEndTime(Math.floor(endTime.valueOf() / 1000).toString());
+  }, [endTimeBuffer]);
   return (
     <div>
       <Header title="Create Pledgy" onClick={() => router.back()} />
@@ -54,7 +62,7 @@ export const CreatePledgy = () => {
             <Select
               options={endTimeOptions}
               placeholder="End Time"
-              onChange={(e) => setRule(e.target.value)}
+              onChange={(e) => setEndTimeBuffer(e.target.value)}
             />
           </div>
           <div className="w-full px-4 border-b border-[#e6e6e6] justify-center items-center gap-3 inline-flex">
@@ -113,9 +121,11 @@ export const CreatePledgy = () => {
                 0.001 USDC.e
               </div>
             </div>
-            <button className="btn btn-primary m-1  w-full" onClick={() => {}}>
-              Create Now
-            </button>
+            <SendTransaction
+              title={title}
+              description={description}
+              endTime={endTime}
+            />
           </div>
         </div>
       </div>

@@ -9,12 +9,6 @@ import { useEffect, useState } from 'react';
 import * as yup from 'yup';
 import { validateSchema } from '../helpers/validate-schema';
 import PledgyABI from '../config/ABI.json';
-import {
-  createPublicClient,
-  decodeAbiParameters,
-  http,
-  parseAbiParameters,
-} from 'viem';
 import client from '../config/client';
 import { PledgyAddress, WLDAddress } from '../config';
 
@@ -35,7 +29,15 @@ const sendTransactionErrorPayloadSchema = yup.object({
   status: yup.string<'error'>().equals(['error']).required(),
 });
 
-export const SendTransaction = () => {
+export const SendTransaction = ({
+  title,
+  description,
+  endTime,
+}: {
+  title: string;
+  description: string;
+  endTime: string;
+}) => {
   const [transactionData, setTransactionData] = useState<Record<
     string,
     any
@@ -113,6 +115,9 @@ export const SendTransaction = () => {
   }, [tempInstallFix]);
 
   const onSendTransactionClick = async () => {
+    if (!endTime || !title || !description) {
+      return;
+    }
     const deadline = Math.floor(
       (Date.now() + 30 * 60 * 1000) / 1000
     ).toString();
@@ -149,9 +154,9 @@ export const SendTransaction = () => {
             abi: PledgyABI,
             functionName: 'createGoal',
             args: [
-              'title',
-              'desc',
-              (Math.floor(new Date().valueOf() / 1000) + 10000).toString(),
+              title,
+              description,
+              endTime,
               permitTransfer.nonce,
               deadline,
               'PERMIT2_SIGNATURE_PLACEHOLDER_0',
@@ -174,68 +179,11 @@ export const SendTransaction = () => {
   };
 
   return (
-    <div className="grid gap-y-2">
-      <h2 className="text-2xl font-bold">Transaction</h2>
-      <div className="grid gap-y-1">
-        <p>Raw string:</p>
-
-        <div className="bg-gray-300 min-h-[100px] p-2">
-          <pre className="break-all whitespace-break-spaces max-h-[300px] overflow-y-scroll">
-            {transactionData
-              ? JSON.stringify(transactionData, null, 3)
-              : JSON.stringify(null)}
-          </pre>
-        </div>
-      </div>
-      <div className="grid gap-x-2 grid-cols-2">
-        <button
-          className="bg-black text-white rounded-lg p-4 w-full"
-          onClick={onSendTransactionClick}
-        >
-          Send Transaction
-        </button>
-      </div>
-      {/* <div className="grid gap-x-2 grid-cols-2">
-          <button
-            className="bg-black text-white rounded-lg p-4 w-full"
-            onClick={testNFTPurchase}
-          >
-            Purchase NFT Permit2
-          </button>
-          <button
-            className="bg-black text-white rounded-lg p-4 w-full"
-            onClick={onSendOrbTransactionClick}
-          >
-            Send Orb
-          </button>
-        </div> */}
-
-      <div className="grid gap-y-1">
-        <p>
-          Received from &quot;{ResponseEvent.MiniAppSendTransaction}&quot;:{' '}
-        </p>
-        <div className="bg-gray-300 min-h-[100px] p-2">
-          <pre className="break-all whitespace-break-spaces">
-            {JSON.stringify(receivedSendTransactionPayload, null, 2)}
-          </pre>
-        </div>
-
-        <div className="grid gap-y-1">
-          <p>Validation message:</p>
-          <p className="bg-gray-300 p-2">
-            {sendTransactionPayloadValidationMessage ?? 'No validation'}
-          </p>
-        </div>
-
-        <div className="grid gap-y-1">
-          <p>Verification:</p>
-          {/* {sendTransactionVerificationMessage ?? "No verification yet"} */}
-          {transactionId && <p>Transaction ID: {transactionId}</p>}
-          {isConfirming && <p>Waiting for confirmation...</p>}
-          {isConfirmed && <p>Transaction confirmed.</p>}
-          {isError && <p>{error?.message}</p>}
-        </div>
-      </div>
-    </div>
+    <button
+      className="bg-black text-white rounded-lg p-4 w-full"
+      onClick={onSendTransactionClick}
+    >
+      Send Transaction
+    </button>
   );
 };

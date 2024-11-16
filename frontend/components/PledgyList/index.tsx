@@ -2,7 +2,6 @@
 import { useRouter } from 'next/navigation';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { SendTransaction } from '../Transaction';
 dayjs.extend(relativeTime);
 
 const PledgyItem = ({
@@ -83,7 +82,6 @@ export const PledgyList = () => {
           onClick={() => router.push('/create')}
         />
       </div>
-      <SendTransaction />
       <PledgyItem endTime="2024-11-13T16:00:00.000Z" goalId="123" />
       <PledgyItem endTime="2024-11-16T16:00:00.000Z" goalId="123" />
     </div>
