@@ -34,5 +34,5 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
   },
-  debug: true,
+  debug: false,
 };
