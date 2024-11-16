@@ -41,10 +41,10 @@
         "anonymous": false,
         "inputs": [
             {
-                "indexed": false,
-                "internalType": "string",
-                "name": "id",
-                "type": "string"
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "goalId",
+                "type": "uint256"
             },
             {
                 "indexed": true,
@@ -72,9 +72,21 @@
         "anonymous": false,
         "inputs": [
             {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "goalId",
+                "type": "uint256"
+            },
+            {
                 "indexed": false,
                 "internalType": "string",
-                "name": "id",
+                "name": "title",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "description",
                 "type": "string"
             },
             {
@@ -103,10 +115,10 @@
         "anonymous": false,
         "inputs": [
             {
-                "indexed": false,
-                "internalType": "string",
-                "name": "id",
-                "type": "string"
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "goalId",
+                "type": "uint256"
             },
             {
                 "indexed": false,
@@ -147,10 +159,10 @@
         "anonymous": false,
         "inputs": [
             {
-                "indexed": false,
-                "internalType": "string",
-                "name": "id",
-                "type": "string"
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "goalId",
+                "type": "uint256"
             },
             {
                 "indexed": true,
@@ -208,11 +220,24 @@
         "type": "function"
     },
     {
+        "inputs": [],
+        "name": "SUPPORTED_TOKEN",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
         "inputs": [
             {
-                "internalType": "string",
+                "internalType": "uint256",
                 "name": "_id",
-                "type": "string"
+                "type": "uint256"
             },
             {
                 "internalType": "uint256",
@@ -234,14 +259,29 @@
     {
         "inputs": [
             {
-                "internalType": "string",
+                "internalType": "uint256",
                 "name": "_id",
-                "type": "string"
+                "type": "uint256"
             },
             {
                 "internalType": "uint256",
                 "name": "_amount",
                 "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_nonce",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_deadline",
+                "type": "uint256"
+            },
+            {
+                "internalType": "bytes",
+                "name": "permitSignature",
+                "type": "bytes"
             }
         ],
         "name": "challenge",
@@ -252,9 +292,9 @@
     {
         "inputs": [
             {
-                "internalType": "string",
+                "internalType": "uint256",
                 "name": "_id",
-                "type": "string"
+                "type": "uint256"
             }
         ],
         "name": "claimPayout",
@@ -266,13 +306,33 @@
         "inputs": [
             {
                 "internalType": "string",
-                "name": "_id",
+                "name": "_title",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "_description",
                 "type": "string"
             },
             {
                 "internalType": "uint256",
                 "name": "_endTime",
                 "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_nonce",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_deadline",
+                "type": "uint256"
+            },
+            {
+                "internalType": "bytes",
+                "name": "permitSignature",
+                "type": "bytes"
             }
         ],
         "name": "createGoal",
@@ -283,9 +343,9 @@
     {
         "inputs": [
             {
-                "internalType": "string",
+                "internalType": "uint256",
                 "name": "_id",
-                "type": "string"
+                "type": "uint256"
             }
         ],
         "name": "getChallengePrice",
@@ -302,9 +362,9 @@
     {
         "inputs": [
             {
-                "internalType": "string",
+                "internalType": "uint256",
                 "name": "_id",
-                "type": "string"
+                "type": "uint256"
             },
             {
                 "internalType": "address",
@@ -345,9 +405,9 @@
     {
         "inputs": [
             {
-                "internalType": "string",
+                "internalType": "uint256",
                 "name": "_id",
-                "type": "string"
+                "type": "uint256"
             }
         ],
         "name": "getGoalInfo",
@@ -389,9 +449,9 @@
     {
         "inputs": [
             {
-                "internalType": "string",
+                "internalType": "uint256",
                 "name": "_id",
-                "type": "string"
+                "type": "uint256"
             },
             {
                 "internalType": "address",
@@ -413,9 +473,9 @@
     {
         "inputs": [
             {
-                "internalType": "string",
+                "internalType": "uint256",
                 "name": "",
-                "type": "string"
+                "type": "uint256"
             }
         ],
         "name": "goalExists",
@@ -432,16 +492,26 @@
     {
         "inputs": [
             {
-                "internalType": "string",
+                "internalType": "uint256",
                 "name": "",
-                "type": "string"
+                "type": "uint256"
             }
         ],
         "name": "goals",
         "outputs": [
             {
+                "internalType": "uint256",
+                "name": "goalId",
+                "type": "uint256"
+            },
+            {
                 "internalType": "string",
-                "name": "id",
+                "name": "title",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "description",
                 "type": "string"
             },
             {
@@ -480,10 +550,36 @@
     },
     {
         "inputs": [],
+        "name": "nextGoalId",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
         "name": "owner",
         "outputs": [
             {
                 "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "permit2",
+        "outputs": [
+            {
+                "internalType": "contract IPermit2",
                 "name": "",
                 "type": "address"
             }
@@ -501,9 +597,9 @@
     {
         "inputs": [
             {
-                "internalType": "string",
+                "internalType": "uint256",
                 "name": "_id",
-                "type": "string"
+                "type": "uint256"
             },
             {
                 "internalType": "bool",
@@ -514,6 +610,19 @@
         "name": "resolveGoal",
         "outputs": [],
         "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "token",
+        "outputs": [
+            {
+                "internalType": "contract IERC20",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
         "type": "function"
     },
     {

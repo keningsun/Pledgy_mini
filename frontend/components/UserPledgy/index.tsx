@@ -20,7 +20,7 @@ export const UserPledgy = () => {
               Pledge Pool Price
             </div>
             <div className="text-right text-black text-sm font-normal font-['Inter'] leading-tight">
-              0.001 ETH
+              0.001 WLD
             </div>
           </div>
           <div className="h-5 relative flex items-center justify-between w-full">
@@ -28,7 +28,7 @@ export const UserPledgy = () => {
               Challenge Start with
             </div>
             <div className="text-right text-black text-sm font-normal font-['Inter'] leading-tight">
-               0.000002 ETH
+               0.000002 WLD
             </div>
           </div>
         </div>
@@ -37,7 +37,7 @@ export const UserPledgy = () => {
             The amount you stake now
           </div>
           <div className="text-right text-black text-sm font-normal font-['Inter'] leading-tight">
-            0.001 ETH
+            0.001 WLD
           </div>
         </div>
         <button className="btn btn-primary m-1  w-full" onClick={() => {}}>

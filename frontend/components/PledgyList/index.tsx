@@ -2,6 +2,7 @@
 import { useRouter } from 'next/navigation';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import { SendTransaction } from '../Transaction';
 dayjs.extend(relativeTime);
 
 const PledgyItem = ({
@@ -24,7 +25,7 @@ const PledgyItem = ({
                   Pledgy Test Title for test{' '}
                 </div>
                 <div className="grow shrink basis-0 text-black text-sm font-normal font-['Inter'] leading-tight">
-                  0.02 ETH
+                  0.02 WLD
                 </div>
               </div>
               <div className="self-stretch text-[#828282] text-xs font-normal font-['Inter'] leading-none">
@@ -82,6 +83,7 @@ export const PledgyList = () => {
           onClick={() => router.push('/create')}
         />
       </div>
+      <SendTransaction />
       <PledgyItem endTime="2024-11-13T16:00:00.000Z" goalId="123" />
       <PledgyItem endTime="2024-11-16T16:00:00.000Z" goalId="123" />
     </div>

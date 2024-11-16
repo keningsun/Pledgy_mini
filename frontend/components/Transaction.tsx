@@ -15,7 +15,8 @@ import {
   http,
   parseAbiParameters,
 } from 'viem';
-import { worldchainSepolia } from 'viem/chains';
+import client from '../config/client';
+import { PledgyAddress, WLDAddress } from '../config';
 
 const sendTransactionSuccessPayloadSchema = yup.object({
   status: yup.string<'success'>().oneOf(['success']),
@@ -34,8 +35,6 @@ const sendTransactionErrorPayloadSchema = yup.object({
   status: yup.string<'error'>().equals(['error']).required(),
 });
 
-const PledgyAddress = '0xE266ABEBbaE5833aF1e32B5ABC816061F638b323';
-
 export const SendTransaction = () => {
   const [transactionData, setTransactionData] = useState<Record<
     string,
@@ -50,11 +49,6 @@ export const SendTransaction = () => {
   ] = useState<string | null>();
 
   const [transactionId, setTransactionId] = useState<string>('');
-
-  const client = createPublicClient({
-    chain: worldchainSepolia,
-    transport: http('https://worldchain-sepolia.explorer.alchemy.com'),
-  });
 
   const {
     isLoading: isConfirming,
@@ -106,11 +100,6 @@ export const SendTransaction = () => {
 
           // const responseJson = await response.json();
 
-          // setSendTransactionVerificationMessage(
-          //   responseJson.isValid
-          //     ? "Valid! Successful Transaction"
-          //     : `Failed: ${responseJson.message}`
-          // );
           setTransactionId(payload.transaction_id);
         }
 
@@ -124,6 +113,34 @@ export const SendTransaction = () => {
   }, [tempInstallFix]);
 
   const onSendTransactionClick = async () => {
+    const deadline = Math.floor(
+      (Date.now() + 30 * 60 * 1000) / 1000
+    ).toString();
+
+    const permitTransfer = {
+      permitted: {
+        token: WLDAddress,
+        amount: '1000000000000000',
+      },
+      nonce: Date.now().toString(),
+      deadline,
+    };
+
+    const permitTransferArgsForm = [
+      [permitTransfer.permitted.token, permitTransfer.permitted.amount],
+      permitTransfer.nonce,
+      permitTransfer.deadline,
+    ];
+
+    const transferDetails = {
+      to: PledgyAddress,
+      requestedAmount: '1000000000000000',
+    };
+
+    const transferDetailsArgsForm = [
+      //   transferDetails.to,
+      transferDetails.requestedAmount,
+    ];
     try {
       const payload = await MiniKit.commandsAsync.sendTransaction({
         transaction: [
@@ -131,7 +148,20 @@ export const SendTransaction = () => {
             address: PledgyAddress,
             abi: PledgyABI,
             functionName: 'createGoal',
-            args: ['1', Math.floor(new Date().valueOf() / 1000)],
+            args: [
+              'title',
+              'desc',
+              Math.floor(new Date().valueOf() / 1000) + 10000,
+              permitTransfer.nonce,
+              deadline,
+              'PERMIT2_SIGNATURE_PLACEHOLDER_0',
+            ],
+          },
+        ],
+        permit2: [
+          {
+            ...permitTransfer,
+            spender: PledgyAddress,
           },
         ],
       });

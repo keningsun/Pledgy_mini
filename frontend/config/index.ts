@@ -1,0 +1,2 @@
+export const PledgyAddress = '0x04db3915075371395451b2b59ec638bd98046344';
+export const WLDAddress = '0x2cFc85d8E48F8EAB294be644d9E25C3030863003';

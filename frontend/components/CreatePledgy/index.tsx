@@ -12,18 +12,12 @@ export const CreatePledgy = () => {
   const [rule, setRule] = useState('onChain');
   const [endTime, setEndTime] = useState('');
 
-  const options = [
-    { value: 'onChain', label: 'Onchain' },
-    { value: 'github', label: 'Github' },
-  ];
-  const ruleOptions = [
-    { value: 'onChain', label: 'Onchain' },
-    { value: 'github', label: 'Github' },
-  ];
+  const options = [{ value: 'onChain', label: 'Onchain' }];
+  const ruleOptions = [{ value: '0', label: 'Pledgy Starter Rule' }];
 
   const endTimeOptions = [
-    { value: (24 * 3600).toString(), label: '1 day' },
-    { value: (3 * 24 * 3600).toString(), label: '3 days' },
+    { value: (12 * 3600).toString(), label: 'half day' },
+    { value: (24 * 3600).toString(), label: '1 days' },
     { value: (5 * 24 * 3600).toString(), label: '5 days' },
     { value: (7 * 24 * 3600).toString(), label: '7 days' },
   ];
@@ -91,7 +85,7 @@ export const CreatePledgy = () => {
                   Pledge Pool Price
                 </div>
                 <div className="text-right text-black text-sm font-normal font-['Inter'] leading-tight">
-                  0.001 ETH
+                  0.001 WLD
                 </div>
               </div>
               <div className="h-5 relative flex items-center justify-between w-full">
@@ -99,7 +93,7 @@ export const CreatePledgy = () => {
                   Challenge Start with
                 </div>
                 <div className="text-right text-black text-sm font-normal font-['Inter'] leading-tight">
-                   0.000002 ETH
+                   0.000002 WLD
                 </div>
               </div>
               <div className="h-5 relative flex items-center justify-between w-full">
@@ -107,7 +101,7 @@ export const CreatePledgy = () => {
                   Challenger Cap
                 </div>
                 <div className="text-right text-black text-sm font-normal font-['Inter'] leading-tight">
-                  50 ETH
+                  50 WLD
                 </div>
               </div>
             </div>
@@ -116,7 +110,7 @@ export const CreatePledgy = () => {
                 The amount you stake now
               </div>
               <div className="text-right text-black text-sm font-normal font-['Inter'] leading-tight">
-                0.001 ETH
+                0.001 WLD
               </div>
             </div>
             <button className="btn btn-primary m-1  w-full" onClick={() => {}}>
