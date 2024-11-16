@@ -2,7 +2,7 @@
 pragma solidity ^0.8.27;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
 
 /**
@@ -29,29 +29,25 @@ contract ChallengeMarket is Ownable, ReentrancyGuard {
     mapping(string => Goal) public goals;
     mapping(string => bool) public goalExists;
 
-    uint256 public constant MIN_INITIAL_STAKE = 0.1 ether;
+    uint256 public constant MIN_INITIAL_STAKE = 0.001 ether;
     uint256 public constant SLOPE = 2e12;
     uint256 public constant MAX_CHALLENGES = 50;
 
     // --- Events ---
     event GoalCreated(
-        string indexed id,
+        string id,
         uint256 endTime,
         address indexed creator,
         uint256 initialStake
     );
     event GoalChallenged(
-        string indexed id,
+        string id,
         address indexed challenger,
         uint256 amount,
         uint256 cost
     );
-    event GoalResolved(string indexed id, bool result, uint256 totalValue);
-    event PayoutClaimed(
-        string indexed id,
-        address indexed recipient,
-        uint256 amount
-    );
+    event GoalResolved(string id, bool result, uint256 totalValue);
+    event PayoutClaimed(string id, address indexed recipient, uint256 amount);
 
     // --- Modifiers ---
     modifier goalExists_(string memory _id) {
@@ -73,6 +69,8 @@ contract ChallengeMarket is Ownable, ReentrancyGuard {
         require(goals[_id].isResolved, "Goal not resolved yet");
         _;
     }
+
+    constructor(address initialOwner) Ownable(initialOwner) {}
 
     // --- External functions ---
     function createGoal(string memory _id, uint256 _endTime) external payable {
@@ -154,7 +152,22 @@ contract ChallengeMarket is Ownable, ReentrancyGuard {
             );
             payout = goal.totalValue;
         } else {
-            payout = (goal.totalValue * userChallenges) / goal.totalChallenges;
+            if (goal.totalChallenges == 0) {
+                // No challenges, owner can claim
+                require(
+                    owner() == msg.sender,
+                    "Only owner can claim when no challenges"
+                );
+                payout = goal.totalValue;
+            } else {
+                // Distribute based on user challenges
+                require(userChallenges > 0, "No challenges to claim");
+                payout = Math.mulDiv(
+                    goal.totalValue,
+                    userChallenges,
+                    goal.totalChallenges
+                );
+            }
         }
 
         goal.challengeCount[msg.sender] = 0;
@@ -165,6 +178,36 @@ contract ChallengeMarket is Ownable, ReentrancyGuard {
     }
 
     // --- External view functions ---
+    function getClaimableAmount(
+        string memory _id,
+        address _user
+    ) external view goalExists_(_id) returns (uint256) {
+        Goal storage goal = goals[_id];
+        uint256 userChallenges = goal.challengeCount[_user];
+
+        if (userChallenges == 0) {
+            return 0;
+        }
+
+        if (!goal.isResolved) {
+            return 0;
+        }
+
+        if (goal.result) {
+            if (_user == goal.creator) {
+                return goal.totalValue;
+            }
+            return 0;
+        } else {
+            return
+                Math.mulDiv(
+                    goal.totalValue,
+                    userChallenges,
+                    goal.totalChallenges
+                );
+        }
+    }
+
     function getChallengePrice(
         string memory _id
     ) external view goalExists_(_id) returns (uint256) {
@@ -207,7 +250,7 @@ contract ChallengeMarket is Ownable, ReentrancyGuard {
 
     // --- Public view functions ---
     function getCurrentPrice(uint256 supply) public pure returns (uint256) {
-        return SLOPE * supply * supply;
+        return Math.mulDiv(SLOPE, supply * supply, 1);
     }
 
     function calculateChallengePrice(
@@ -226,9 +269,19 @@ contract ChallengeMarket is Ownable, ReentrancyGuard {
         uint256 startSupply,
         uint256 endSupply
     ) internal pure returns (uint256) {
-        uint256 endArea = (SLOPE * endSupply * endSupply * endSupply) / 3;
-        uint256 startArea = (SLOPE * startSupply * startSupply * startSupply) /
-            3;
-        return endArea - startArea;
+        uint256 endArea = Math.mulDiv(
+            Math.mulDiv(SLOPE * endSupply, endSupply * endSupply, 1),
+            1,
+            3
+        );
+        uint256 startArea = Math.mulDiv(
+            Math.mulDiv(SLOPE * startSupply, startSupply * startSupply, 1),
+            1,
+            3
+        );
+        if (endArea > startArea) {
+            return endArea - startArea;
+        }
+        return 0;
     }
 }

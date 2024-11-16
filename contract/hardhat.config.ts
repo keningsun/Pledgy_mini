@@ -6,14 +6,14 @@ const config: HardhatUserConfig = {
   solidity: "0.8.27",
   networks: {
     'world-chain-sepolia': {
-      url: 'https://worldchain-sepolia.g.alchemy.com/public',
-      accounts: [process.env.PRIVATE_KEY],
+      url: 'https://worldchain-sepolia.gateway.tenderly.co',
+      accounts: [vars.get("PRIVATE_KEY")],
     },
   },
   etherscan: {
     apiKey: {
       // Is not required by blockscout. Can be any non-empty string
-      'world-chain-sepolia': ""
+      'world-chain-sepolia': "123"
     },
     customChains: [
       {
@@ -27,7 +27,7 @@ const config: HardhatUserConfig = {
     ]
   },
   sourcify: {
-    enabled: true
+    enabled: false
   }
 };
 
