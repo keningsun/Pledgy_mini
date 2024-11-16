@@ -5,6 +5,7 @@ import { SignIn } from '@/components/SignIn';
 import { VerifyBlock } from '@/components/Verify';
 import { signIn, signOut, useSession } from 'next-auth/react';
 import { LoginPage } from '@/components/Login';
+import { PledgyList } from '@/components/PledgyList';
 
 export default function Home() {
   const { data: session } = useSession();
@@ -14,9 +15,8 @@ export default function Home() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24 gap-y-3">
-      <VerifyBlock />
-      <PayBlock />
+    <main className="min-h-screen py-4 px-3">
+      <PledgyList />
     </main>
   );
 }
