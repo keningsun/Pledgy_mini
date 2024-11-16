@@ -10,7 +10,7 @@
     "commit": "git-cz"
   },
   "dependencies": {
-    "@worldcoin/minikit-js": "1.1.1",
+    "@worldcoin/minikit-js": "1.2.0",
     "@worldcoin/minikit-react": "^1.2.0",
     "dayjs": "^1.11.13",
     "eruda": "^3.2.3",
