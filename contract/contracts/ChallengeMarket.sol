@@ -4,6 +4,32 @@ pragma solidity ^0.8.27;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+
+interface IPermit2 {
+    struct TokenPermissions {
+        address token; // ERC20 token address
+        uint256 amount; // Amount allowed
+    }
+
+    struct PermitTransferFrom {
+        TokenPermissions permitted;
+        uint256 nonce;
+        uint256 deadline;
+    }
+
+    struct SignatureTransferDetails {
+        address to;
+        uint256 requestedAmount;
+    }
+
+    function permitTransferFrom(
+        PermitTransferFrom calldata permit,
+        SignatureTransferDetails calldata transferDetails,
+        address owner,
+        bytes calldata signature
+    ) external;
+}
 
 /**
  * @title ChallengeMarket
@@ -15,7 +41,9 @@ contract ChallengeMarket is Ownable, ReentrancyGuard {
 
     // --- Type declarations ---
     struct Goal {
-        string id;
+        uint256 goalId;
+        string title;
+        string description;
         uint256 endTime;
         address creator;
         bool isResolved;
@@ -26,72 +54,125 @@ contract ChallengeMarket is Ownable, ReentrancyGuard {
     }
 
     // --- State variables ---
-    mapping(string => Goal) public goals;
-    mapping(string => bool) public goalExists;
+    mapping(uint256 => Goal) public goals;
+    mapping(uint256 => bool) public goalExists;
+    uint256 public nextGoalId = 1;
 
-    uint256 public constant MIN_INITIAL_STAKE = 0.001 ether;
+    uint256 public constant MIN_INITIAL_STAKE = 10 ** 15;
     uint256 public constant SLOPE = 2e12;
     uint256 public constant MAX_CHALLENGES = 50;
+    address public constant SUPPORTED_TOKEN =
+        0x2cFc85d8E48F8EAB294be644d9E25C3030863003;
+    IPermit2 public permit2;
+    IERC20 public token = IERC20(SUPPORTED_TOKEN);
 
     // --- Events ---
     event GoalCreated(
-        string id,
+        uint256 indexed goalId,
+        string title,
+        string description,
         uint256 endTime,
         address indexed creator,
         uint256 initialStake
     );
     event GoalChallenged(
-        string id,
+        uint256 indexed goalId,
         address indexed challenger,
         uint256 amount,
         uint256 cost
     );
-    event GoalResolved(string id, bool result, uint256 totalValue);
-    event PayoutClaimed(string id, address indexed recipient, uint256 amount);
+    event GoalResolved(uint256 indexed goalId, bool result, uint256 totalValue);
+    event PayoutClaimed(
+        uint256 indexed goalId,
+        address indexed recipient,
+        uint256 amount
+    );
 
     // --- Modifiers ---
-    modifier goalExists_(string memory _id) {
-        require(goalExists[_id], "Goal does not exist");
+    modifier goalExists_(uint256 _id) {
+        require(goals[_id].goalId != 0, "Goal does not exist");
         _;
     }
 
-    modifier goalNotExpired(string memory _id) {
+    modifier goalNotExpired(uint256 _id) {
         require(block.timestamp < goals[_id].endTime, "Goal has expired");
         _;
     }
 
-    modifier goalNotResolved(string memory _id) {
+    modifier goalNotResolved(uint256 _id) {
         require(!goals[_id].isResolved, "Goal already resolved");
         _;
     }
 
-    modifier goalIsResolved(string memory _id) {
+    modifier goalIsResolved(uint256 _id) {
         require(goals[_id].isResolved, "Goal not resolved yet");
         _;
     }
 
-    constructor(address initialOwner) Ownable(initialOwner) {}
+    constructor(address initialOwner) Ownable(initialOwner) {
+        permit2 = IPermit2(0x000000000022D473030F116dDEE9F6B43aC78BA3);
+    }
 
     // --- External functions ---
-    function createGoal(string memory _id, uint256 _endTime) external payable {
-        require(!goalExists[_id], "Goal already exists");
+    function createGoal(
+        string memory _title,
+        string memory _description,
+        uint256 _endTime,
+        uint256 _nonce,
+        uint256 _deadline,
+        bytes calldata permitSignature
+    ) external payable {
+        uint256 goalId = nextGoalId;
+        nextGoalId++; // Increment goalId for the next goal
         require(_endTime > block.timestamp, "End time must be in future");
-        require(msg.value >= MIN_INITIAL_STAKE, "Insufficient initial stake");
 
-        Goal storage newGoal = goals[_id];
-        newGoal.id = _id;
+        if (permitSignature.length > 0) {
+            permit2.permitTransferFrom(
+                IPermit2.PermitTransferFrom({
+                    permitted: IPermit2.TokenPermissions({
+                        token: SUPPORTED_TOKEN,
+                        amount: MIN_INITIAL_STAKE
+                    }),
+                    nonce: _nonce,
+                    deadline: _deadline
+                }),
+                IPermit2.SignatureTransferDetails({
+                    to: address(this),
+                    requestedAmount: MIN_INITIAL_STAKE
+                }),
+                msg.sender,
+                permitSignature
+            );
+        } else {
+            revert("No Permit2 signature provided");
+        }
+
+        Goal storage newGoal = goals[goalId];
+        newGoal.goalId = goalId;
+        newGoal.title = _title;
+        newGoal.description = _description;
         newGoal.endTime = _endTime;
         newGoal.creator = msg.sender;
-        newGoal.totalValue = msg.value;
+        newGoal.totalValue = MIN_INITIAL_STAKE;
 
-        goalExists[_id] = true;
+        goalExists[goalId] = true;
 
-        emit GoalCreated(_id, _endTime, msg.sender, msg.value);
+        emit GoalCreated(
+            goalId,
+            _title,
+            _description,
+            _endTime,
+            msg.sender,
+            MIN_INITIAL_STAKE
+        );
     }
 
     function challenge(
-        string memory _id,
-        uint256 _amount
+        uint256 _id,
+        uint256 _amount,
+        uint256 _nonce,
+        uint256 _deadline,
+        bytes calldata permitSignature
     )
         external
         payable
@@ -107,22 +188,37 @@ contract ChallengeMarket is Ownable, ReentrancyGuard {
         );
 
         uint256 cost = calculateChallengePrice(_id, _amount);
-        require(msg.value >= cost, "Insufficient payment");
+        if (permitSignature.length > 0) {
+            permit2.permitTransferFrom(
+                IPermit2.PermitTransferFrom({
+                    permitted: IPermit2.TokenPermissions({
+                        token: SUPPORTED_TOKEN,
+                        amount: cost
+                    }),
+                    nonce: _nonce,
+                    deadline: _deadline
+                }),
+                IPermit2.SignatureTransferDetails({
+                    to: address(this),
+                    requestedAmount: cost
+                }),
+                msg.sender,
+                permitSignature
+            );
+        } else {
+            revert("No Permit2 signature provided");
+        }
 
         Goal storage goal = goals[_id];
         goal.challengeCount[msg.sender] += _amount;
         goal.totalChallenges += _amount;
         goal.totalValue += cost;
 
-        if (msg.value > cost) {
-            payable(msg.sender).transfer(msg.value - cost);
-        }
-
         emit GoalChallenged(_id, msg.sender, _amount, cost);
     }
 
     function resolveGoal(
-        string memory _id,
+        uint256 _id,
         bool _result
     ) external onlyOwner goalExists_(_id) goalNotResolved(_id) {
         require(
@@ -138,7 +234,7 @@ contract ChallengeMarket is Ownable, ReentrancyGuard {
     }
 
     function claimPayout(
-        string memory _id
+        uint256 _id
     ) external goalExists_(_id) goalIsResolved(_id) nonReentrant {
         Goal storage goal = goals[_id];
         uint256 userChallenges = goal.challengeCount[msg.sender];
@@ -172,14 +268,14 @@ contract ChallengeMarket is Ownable, ReentrancyGuard {
 
         goal.challengeCount[msg.sender] = 0;
 
-        payable(msg.sender).transfer(payout);
+        token.transfer(msg.sender, payout);
 
         emit PayoutClaimed(_id, msg.sender, payout);
     }
 
     // --- External view functions ---
     function getClaimableAmount(
-        string memory _id,
+        uint256 _id,
         address _user
     ) external view goalExists_(_id) returns (uint256) {
         Goal storage goal = goals[_id];
@@ -209,21 +305,21 @@ contract ChallengeMarket is Ownable, ReentrancyGuard {
     }
 
     function getChallengePrice(
-        string memory _id
+        uint256 _id
     ) external view goalExists_(_id) returns (uint256) {
         Goal storage goal = goals[_id];
         return getCurrentPrice(goal.totalChallenges);
     }
 
     function getUserChallenges(
-        string memory _id,
+        uint256 _id,
         address _user
     ) external view goalExists_(_id) returns (uint256) {
         return goals[_id].challengeCount[_user];
     }
 
     function getGoalInfo(
-        string memory _id
+        uint256 _id
     )
         external
         view
@@ -254,7 +350,7 @@ contract ChallengeMarket is Ownable, ReentrancyGuard {
     }
 
     function calculateChallengePrice(
-        string memory _id,
+        uint256 _id,
         uint256 _amount
     ) public view goalExists_(_id) returns (uint256) {
         Goal storage goal = goals[_id];
