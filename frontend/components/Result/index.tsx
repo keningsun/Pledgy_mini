@@ -26,7 +26,7 @@ export const Result = () => {
             Claimable Balance
           </div>
           <div className="text-right text-black text-sm font-normal font-['Inter'] leading-tight">
-            0 ETH
+            0 WLD
           </div>
         </div>
         <button className="btn btn-primary m-1  w-full" onClick={() => {}}>
