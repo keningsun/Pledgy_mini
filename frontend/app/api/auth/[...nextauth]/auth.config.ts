@@ -1,12 +1,18 @@
-import type { AuthOptions } from 'next-auth';
+import { NextAuthOptions } from 'next-auth';
 
-export const authOptions: AuthOptions = {
+// For more information on each option (and a full list of options) go to
+// https://next-auth.js.org/configuration/options
+export const authOptions: NextAuthOptions = {
+  // https://next-auth.js.org/configuration/providers/oauth
   providers: [
     {
       id: 'worldcoin',
       name: 'Worldcoin',
       type: 'oauth',
-      wellKnown: 'https://id.worldcoin.org/.well-known/openid-configuration',
+      wellKnown:
+        process.env.NEXT_DEPLOYMENT_ENVIRONMENT === 'staging'
+          ? 'https://staging.id.worldcoin.org/.well-known/openid-configuration'
+          : 'https://id.worldcoin.org/.well-known/openid-configuration',
       authorization: { params: { scope: 'openid' } },
       clientId: process.env.WLD_CLIENT_ID,
       clientSecret: process.env.WLD_CLIENT_SECRET,
@@ -23,9 +29,10 @@ export const authOptions: AuthOptions = {
     },
   ],
   callbacks: {
-    async signIn({ user }) {
-      return true;
+    async jwt({ token }) {
+      token.userRole = 'admin';
+      return token;
     },
   },
-  debug: process.env.NODE_ENV === 'development',
+  debug: true,
 };

@@ -10,7 +10,10 @@ export const LoginPage = () => {
         Pledgy gamifies goal-setting, letting users set challenges with rewards
         for success or stake-sharing for failure.
       </p>
-      <button className="btn btn-primary w-80 mt-8" onClick={() => signIn()}>
+      <button
+        className="btn btn-primary w-80 mt-8"
+        onClick={() => signIn('worldcoin')}
+      >
         Continue with World ID
       </button>
     </div>
