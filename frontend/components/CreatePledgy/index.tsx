@@ -20,12 +20,14 @@ export const CreatePledgy = () => {
     { value: 'onChain', label: 'Onchain' },
     { value: 'github', label: 'Github' },
   ];
+
   const endTimeOptions = [
-    { value: '1', label: '1 day' },
-    { value: '3', label: '5 days' },
-    { value: '5', label: '5 days' },
-    { value: '7', label: '7 days' },
+    { value: (24 * 3600).toString(), label: '1 day' },
+    { value: (3 * 24 * 3600).toString(), label: '3 days' },
+    { value: (5 * 24 * 3600).toString(), label: '5 days' },
+    { value: (7 * 24 * 3600).toString(), label: '7 days' },
   ];
+
   return (
     <div>
       <Header title="Create Pledgy" onClick={() => router.back()} />
