@@ -120,7 +120,7 @@ export const SendTransaction = () => {
     const permitTransfer = {
       permitted: {
         token: WLDAddress,
-        amount: '1000000000000000',
+        amount: '1000',
       },
       nonce: Date.now().toString(),
       deadline,
@@ -134,7 +134,7 @@ export const SendTransaction = () => {
 
     const transferDetails = {
       to: PledgyAddress,
-      requestedAmount: '1000000000000000',
+      requestedAmount: '1000',
     };
 
     const transferDetailsArgsForm = [
@@ -151,7 +151,7 @@ export const SendTransaction = () => {
             args: [
               'title',
               'desc',
-              Math.floor(new Date().valueOf() / 1000) + 10000,
+              (Math.floor(new Date().valueOf() / 1000) + 10000).toString(),
               permitTransfer.nonce,
               deadline,
               'PERMIT2_SIGNATURE_PLACEHOLDER_0',

@@ -32,7 +32,7 @@ export const CreatePledgy = () => {
               Title
             </div>
             <input
-              className="w-100 h-10 p-4 bg-[#f6f6f6] rounded-lg"
+              className="w-100 h-10 p-4 bg-[#f6f6f6] text-black rounded-lg"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
@@ -40,7 +40,7 @@ export const CreatePledgy = () => {
               Description
             </div>
             <textarea
-              className="w-100 h-24 p-4 bg-[#f6f6f6] rounded-lg"
+              className="w-100 h-24 p-4 bg-[#f6f6f6] rounded-lg text-black"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
@@ -85,7 +85,7 @@ export const CreatePledgy = () => {
                   Pledge Pool Price
                 </div>
                 <div className="text-right text-black text-sm font-normal font-['Inter'] leading-tight">
-                  0.001 WLD
+                  0.001 USDC.e
                 </div>
               </div>
               <div className="h-5 relative flex items-center justify-between w-full">
@@ -93,7 +93,7 @@ export const CreatePledgy = () => {
                   Challenge Start with
                 </div>
                 <div className="text-right text-black text-sm font-normal font-['Inter'] leading-tight">
-                   0.000002 WLD
+                   0.000002 USDC.e
                 </div>
               </div>
               <div className="h-5 relative flex items-center justify-between w-full">
@@ -101,7 +101,7 @@ export const CreatePledgy = () => {
                   Challenger Cap
                 </div>
                 <div className="text-right text-black text-sm font-normal font-['Inter'] leading-tight">
-                  50 WLD
+                  50
                 </div>
               </div>
             </div>
@@ -110,7 +110,7 @@ export const CreatePledgy = () => {
                 The amount you stake now
               </div>
               <div className="text-right text-black text-sm font-normal font-['Inter'] leading-tight">
-                0.001 WLD
+                0.001 USDC.e
               </div>
             </div>
             <button className="btn btn-primary m-1  w-full" onClick={() => {}}>

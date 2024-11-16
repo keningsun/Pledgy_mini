@@ -58,11 +58,11 @@ contract ChallengeMarket is Ownable, ReentrancyGuard {
     mapping(uint256 => bool) public goalExists;
     uint256 public nextGoalId = 1;
 
-    uint256 public constant MIN_INITIAL_STAKE = 10 ** 15;
+    uint256 public constant MIN_INITIAL_STAKE = 10 ** 3;
     uint256 public constant SLOPE = 2e12;
     uint256 public constant MAX_CHALLENGES = 50;
     address public constant SUPPORTED_TOKEN =
-        0x2cFc85d8E48F8EAB294be644d9E25C3030863003;
+        0x79A02482A880bCE3F13e09Da970dC34db4CD24d1;
     IPermit2 public permit2;
     IERC20 public token = IERC20(SUPPORTED_TOKEN);
 
@@ -90,7 +90,7 @@ contract ChallengeMarket is Ownable, ReentrancyGuard {
 
     // --- Modifiers ---
     modifier goalExists_(uint256 _id) {
-        require(goals[_id].goalId != 0, "Goal does not exist");
+        require(goalExists[_id], "Goal does not exist");
         _;
     }
 
@@ -144,7 +144,10 @@ contract ChallengeMarket is Ownable, ReentrancyGuard {
                 permitSignature
             );
         } else {
-            revert("No Permit2 signature provided");
+            require(
+                msg.value == MIN_INITIAL_STAKE,
+                "Incorrect ETH amount sent"
+            );
         }
 
         Goal storage newGoal = goals[goalId];
@@ -206,7 +209,7 @@ contract ChallengeMarket is Ownable, ReentrancyGuard {
                 permitSignature
             );
         } else {
-            revert("No Permit2 signature provided");
+            require(msg.value == cost, "Incorrect ETH amount sent");
         }
 
         Goal storage goal = goals[_id];

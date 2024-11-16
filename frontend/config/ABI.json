@@ -1,38 +1,40 @@
-[  {
-    "inputs": [
-        {
-            "internalType": "string",
-            "name": "_title",
-            "type": "string"
-        },
-        {
-            "internalType": "string",
-            "name": "_description",
-            "type": "string"
-        },
-        {
-            "internalType": "uint256",
-            "name": "_endTime",
-            "type": "uint256"
-        },
-        {
-            "internalType": "uint256",
-            "name": "_nonce",
-            "type": "uint256"
-        },
-        {
-            "internalType": "uint256",
-            "name": "_deadline",
-            "type": "uint256"
-        },
-        {
-            "internalType": "bytes",
-            "name": "permitSignature",
-            "type": "bytes"
-        }
-    ],
-    "name": "createGoal",
-    "outputs": [],
-    "stateMutability": "payable",
-    "type": "function"
-}]
+[
+    {
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "_title",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "_description",
+                "type": "string"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_endTime",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_nonce",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_deadline",
+                "type": "uint256"
+            },
+            {
+                "internalType": "bytes",
+                "name": "permitSignature",
+                "type": "bytes"
+            }
+        ],
+        "name": "createGoal",
+        "outputs": [],
+        "stateMutability": "payable",
+        "type": "function"
+    }
+]
