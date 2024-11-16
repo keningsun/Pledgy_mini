@@ -12,7 +12,7 @@ export const Result = () => {
       <Header title="Pledgy" onClick={() => router.back()} />
       <div className="flex flex-col justify-center items-center mx-3">
         <p className="text-black text-2xl font-bold font-['Inter'] leading-tight mt-16">
-          Pledger Success
+          Pledger Failed
         </p>
         <img
           src="/assets/img-result.png"

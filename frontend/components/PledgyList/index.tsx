@@ -5,9 +5,13 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
 
 const PledgyItem = ({
+  title,
+  desc,
   endTime,
   goalId,
 }: {
+  title: string;
+  desc: string;
   endTime: string;
   goalId: string;
 }) => {
@@ -21,10 +25,10 @@ const PledgyItem = ({
             <div className="w-64 flex-col justify-start items-start inline-flex">
               <div className="self-stretch justify-start items-start gap-2.5 inline-flex">
                 <div className="text-black text-sm font-semibold font-['Inter'] leading-tight">
-                  Pledgy Test Title for test{' '}
+                  {title}
                 </div>
                 <div className="grow shrink basis-0 text-black text-sm font-normal font-['Inter'] leading-tight">
-                  0.02 WLD
+                  0.01 WLD
                 </div>
               </div>
               <div className="self-stretch text-[#828282] text-xs font-normal font-['Inter'] leading-none">
@@ -34,8 +38,7 @@ const PledgyItem = ({
           </div>
           <div className="h-24 flex-col justify-center items-start gap-3 flex">
             <div className="self-stretch text-black text-sm font-normal font-['Inter'] leading-tight">
-              Body text for a post. Since it’s a social app, sometimes it’s a
-              hot take, and sometimes it’s a question.
+              {desc}
             </div>
             <div className="self-stretch justify-between items-center inline-flex">
               <div className="grow shrink basis-0 h-5 justify-start items-center gap-4 flex">
@@ -82,8 +85,18 @@ export const PledgyList = () => {
           onClick={() => router.push('/create')}
         />
       </div>
-      <PledgyItem endTime="2024-11-13T16:00:00.000Z" goalId="123" />
-      <PledgyItem endTime="2024-11-16T16:00:00.000Z" goalId="123" />
+      <PledgyItem
+        title="Pledgy Bet 01"
+        desc="At least one hash per day on the chain"
+        endTime="2024-11-16T19:00:00.000Z"
+        goalId="1"
+      />
+      <PledgyItem
+        title="Pledgy Bet 02"
+        desc="The current address balance reaches 1K USDC.e after 10 days"
+        endTime="2024-11-16T16:00:00.000Z"
+        goalId="2"
+      />
     </div>
   );
 };
