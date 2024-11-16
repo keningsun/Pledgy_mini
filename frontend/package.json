@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "commit": "git-cz"
   },
   "dependencies": {
     "@worldcoin/minikit-js": "1.1.1",
@@ -20,6 +21,7 @@
     "@types/node": "^20.16.1",
     "@types/react": "^18.3.4",
     "@types/react-dom": "^18",
+    "daisyui": "^4.12.14",
     "eslint": "^8",
     "eslint-config-next": "14.2.6",
     "postcss": "^8",
