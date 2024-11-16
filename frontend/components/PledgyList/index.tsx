@@ -87,14 +87,14 @@ export const PledgyList = () => {
       </div>
       <PledgyItem
         title="Pledgy Bet 01"
-        desc="At least one hash per day on the chain"
-        endTime="2024-11-16T19:00:00.000Z"
+        desc="The current address balance reaches 1K USDC.e after 12 hours"
+        endTime="2024-11-16T10:00:00.000Z"
         goalId="1"
       />
       <PledgyItem
         title="Pledgy Bet 02"
-        desc="The current address balance reaches 1K USDC.e after 10 days"
-        endTime="2024-11-16T16:00:00.000Z"
+        desc="The current address balance reaches 100 USDC.e after 12 hours"
+        endTime="2024-11-16T08:00:00.000Z"
         goalId="2"
       />
     </div>
