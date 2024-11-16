@@ -1,5 +1,7 @@
 'use client';
 import { useRouter } from 'next/navigation';
+import { SendTransaction } from '../Transaction';
+import { WalletAuth } from '../WalletAuth';
 
 export const PledgyList = () => {
   const router = useRouter();
@@ -15,6 +17,7 @@ export const PledgyList = () => {
           onClick={() => router.push('/create')}
         />
       </div>
+      <SendTransaction />
       <div className="w-full p-2.5 pb-0 bg-[#f6f6f6] rounded-lg flex-col justify-start items-end gap-8 inline-flex mt-5">
         <div className="pr-1 pb-3 justify-start items-center inline-flex">
           <div className="w-100 self-stretch flex-col justify-start items-start gap-3 inline-flex">
